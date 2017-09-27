@@ -1,4 +1,3 @@
-# I'm editing my file, this is a github's test.
 rm(list = ls())
 # Set working directory 
 setwd("D:/documents/Dropbox/NYU/Semester I/Quant I/PS 2/")
