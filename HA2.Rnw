@@ -1,0 +1,210 @@
+\documentclass[10pt]{article}
+
+\usepackage{blindtext}
+\usepackage[english]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage[]{subfigure}
+\usepackage[]{graphicx}
+
+\title{Exercise 2}
+\author{Anna Denisenko}
+\date{\today}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\maketitle
+\section{}
+We can look at three core cases: when correlation between variables is big and positive, big and negative and when there are no obvious correlation. From the Figure 1 we can easily observe, that when we change correlation between two variables the bivariate distribution changes respectively. If corr($x_1, x_2$) = 1 -- observations are grouped around line $x_1=x_2$. 
+\section{}
+
+\begin{figure}[t]
+\centering
+
+\subfigure[C($x_1, x_2$) = 0]{
+\includegraphics[width=.4\textwidth]{00.pdf}
+}
+\subfigure[C($x_1, x_2$) = 0; 3D]{
+\includegraphics[width=.4\textwidth]{003d.pdf}
+}
+
+\subfigure[C($x_1, x_2$) = -1]{
+\includegraphics[width=.4\textwidth]{-1-1.pdf}
+}
+\subfigure[C($x_1, x_2$) = -1, 3D]{
+\includegraphics[width=.4\textwidth]{-1-13d.pdf}
+}
+
+\subfigure[C($x_1, x_2$) = 1]{
+\includegraphics[width=.4\textwidth]{11.pdf}
+}
+\subfigure[C($x_1, x_2$) = 1, 3D]{
+\includegraphics[width=.4\textwidth]{113d.pdf}
+}
+
+\caption{Different correlations}
+\end{figure}
+R for number of simulations; number of reps is number of reps. 
+<<>>=
+r<-1000
+number_of_reps <- c(5, 15, 50, 5000)
+@
+Bernoulli:
+<<>>=
+mean_ber <- matrix(0, nrow = r, ncol = 4)
+for (j in 1:r){
+  for (i in 1:4){
+    gen_ber <- rbinom(number_of_reps[i], 1, 1/3) 
+    mean_ber[j,i] <-   sum(gen_ber, na.rm = FALSE)/number_of_reps[i]
+  }
+}
+plot(density(mean_ber[,1]))
+plot(density(mean_ber[,2]))
+plot(density(mean_ber[,3]))
+plot(density(mean_ber[,4]))
+@
+\begin{figure}[t]
+\centering
+
+\subfigure[Bernoulli, 5 reps]{
+\includegraphics[width=.4\textwidth]{ber1.pdf}
+}
+\subfigure[Bernoulli, 15 reps]{
+\includegraphics[width=.4\textwidth]{ber2.pdf}
+}
+\subfigure[Bernoulli, 50 reps]{
+\includegraphics[width=.4\textwidth]{ber3.pdf}
+}
+\subfigure[Bernoulli, 5000 reps]{
+\includegraphics[width=.4\textwidth]{ber4.pdf}
+}
+\caption{Bernoulli}
+\end{figure}
+Binomial:
+<<>>=
+mean_binom <- matrix(0, nrow = r, ncol = 4)
+for (j in 1:r){
+  for (i in 1:4){
+    gen_binom <- rbinom(number_of_reps[i], 5, 1/3) 
+    mean_binom[j,i] <-   sum(gen_binom, na.rm = FALSE)/number_of_reps[i]
+  }
+}
+plot(density(mean_binom[,1]))
+plot(density(mean_binom[,2]))
+plot(density(mean_binom[,3]))
+plot(density(mean_binom[,4]))
+@
+\begin{figure}[t]
+\centering
+
+\subfigure[Binomial, 5 reps]{
+\includegraphics[width=.4\textwidth]{bin1.pdf}
+}
+\subfigure[Binomial, 15 reps]{
+\includegraphics[width=.4\textwidth]{bin2.pdf}
+}
+\subfigure[Binomial, 50 reps]{
+\includegraphics[width=.4\textwidth]{bin3.pdf}
+}
+\subfigure[Binomial, 5000 reps]{
+\includegraphics[width=.4\textwidth]{bin4.pdf}
+}
+\caption{Binomial}
+\end{figure}
+Cauchy:
+<<>>=
+mean_cauchy <- matrix(0, nrow = r, ncol = 4)
+for (j in 1:r){
+  for(i in 1:4){
+    gen_cauchy <- rcauchy(number_of_reps[i])
+    mean_cauchy[j,i] <- sum(gen_cauchy, na.rm = FALSE)/number_of_reps[i]
+  }
+}
+plot(density(mean_cauchy[,1]))
+plot(density(mean_cauchy[,2]))
+plot(density(mean_cauchy[,3]))
+plot(density(mean_cauchy[,4]))
+@
+
+\begin{figure}[t]
+\centering
+
+\subfigure[Cauchy, 5 reps]{
+\includegraphics[width=.4\textwidth]{cau1.pdf}
+}
+\subfigure[Cauchy, 15 reps]{
+\includegraphics[width=.4\textwidth]{cau2.pdf}
+}
+\subfigure[Cauchy, 50 reps]{
+\includegraphics[width=.4\textwidth]{cau3.pdf}
+}
+\subfigure[Cauchy, 5000 reps]{
+\includegraphics[width=.4\textwidth]{cau4.pdf}
+}
+\caption{Cauchy}
+\end{figure}
+
+Out of Figures 2, 3 we can observe that the more observations we have in our sample density, the more likely sample mean behave normally. The Cauchy, as it was already said is counter example -- its tails are wide enough so it has neither mean nor variance. 
+\section{}
+Matr - initial matrix. This is triangular matrix with determinant equals to 1, so only "a" element changes dering inversion. We can observe it in the following exercise:
+<<>>=
+Matr <- matrix(c(1,0,100500,1), nrow = 2, ncol = 2)
+a = c(seq(0,100, by=10))
+for (i in a){
+  Matr[1,2] <- i
+  print(solve(Matr))
+}
+@
+If "a" is very big:
+<<>>=
+solve(matrix(c(1,0,100000,1), nrow = 2, ncol = 2))
+@
+\section{}
+a)
+<<>>=
+M1 <- matrix(c(1,2,3,1), nrow = 2, ncol = 2)
+solve(M1)
+@
+Yes.\\
+b) 
+<<>>=
+M2 <- matrix(c(1,2,-1,-2), nrow = 2, ncol = 2)
+@
+No.\\
+c)
+<<>>=
+M3 <- matrix(c(1,2,2,1,1,0), nrow = 3, ncol = 2)
+N <-matrix(c(0,2,1,3,1,4), nrow = 2, ncol = 3)
+MN <- M3%*% N
+MN
+@
+d) 
+\[ Tr=\left[ {\begin{array}{ccc} 1 & 1 & 2 \\ 1&0 & -1 \end{array} }  \right] \]
+e) 
+<<>>=
+Tr <- matrix(c(1,1,1,0,2,-1), nrow = 2, ncol = 3)
+Tr
+tTr <- t(Tr)
+tTr
+@
+f) 
+<<>>=
+v <- c(1,2)
+A <- matrix(c(1,2,0,1),ncol = 2, nrow = 2)
+t(v)%*%A%*%v
+@
+g)
+<<>>= 
+Z <- matrix(c(1,2,3,1,0,0,0,1,0), nrow = 3, ncol = 3)
+rank(Z)
+solve(Z)
+@
+h) 
+<<>>=
+solve(Z)
+solve(Z)%*%Z
+@
+\end{document}
