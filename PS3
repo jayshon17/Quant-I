@@ -1,0 +1,66 @@
+rm(list = ls())
+# Set working directory 
+setwd("D:/documents/Dropbox/NYU/Semester I/Quant I/PS 2/")
+# Loading necessary packages
+install.packages("MASS")
+install.packages("mvtnorm")
+library(MASS)
+library(mvtnorm)
+#==================================================================
+# Simulating endogeneity in the main regressor 
+rm(list = ls())
+# Seed
+set.seed(121696)
+# Simulating normal
+smat<-matrix(c(1,.5,.5,1),2)
+data<-rmvnorm(100,sigma =smat)
+# Set x and residuals
+x<-data[,1]
+eps<-data[,2]
+# Simulating data generating process
+y<-3+7*x+eps
+# Regressions
+reg<-lm(y~x)
+summary.lm(reg)
+# Regressing residuals over x
+regtest<-lm(x~reg$resid)
+# Results
+summary.lm(regtest)
+summary.lm(lm(x~eps))
+#==================================================================
+# Simulating multivariate regression with correlated covariates 
+rm(list = ls())
+# Seed
+set.seed(121696)
+# Simulating normal
+smat<-matrix(c(1,.5,.5,1),2)
+data<-rmvnorm(100,sigma =smat)
+# Set x
+x1<-data[,1]
+x2<-data[,2]
+# Simulating errors
+u <- rnorm(100,0,1)
+# Simulating data generating process
+y<-3+5*x1+5.5*x2+u
+# Regressions on x_1 and x_2
+reg1<-lm(y ~ x1 + x2)
+reg1
+# Regression on x_1 only 
+reg2<-lm(y~x2)
+
+reg3<-lm(x1~x2)
+lm(reg2$resid~reg3$resid)
+#==================================================================
+# Obtaining the coefficients using matrices 
+ones <- numeric(100)+1
+X<-cbind(ones,x1,x2)
+solve(t(X)%*%X)%*%t(X)%*%y ; #Obtaining the vector of coefficients
+#==================================================================
+# Regression with no slope
+summary.lm(lm(y ~ x1 + x2 -1))
+# Centering y, x_1 and x_2
+y_centered<-y-mean(y)
+x1_centered<-x1-mean(x1)
+x2_centered<-x2-mean(x2)
+summary.lm(lm(y_centered ~ 0 + x1_centered + x2_centered))
+
